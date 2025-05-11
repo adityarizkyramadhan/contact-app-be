@@ -1,4 +1,4 @@
-import { User } from "../generated/prisma";
+import { User } from "@prisma/client";
 
 export type RegisterUserRequest = {
   username: string;
@@ -20,7 +20,7 @@ export function toUserResponse(user: User): UserResponse {
     id: user.id,
     username: user.username,
     name: user.name,
-    token: user?.token || undefined,
+    token: user?.token ?? undefined,
     created_at: user.created_at,
     updated_at: user.updated_at,
   };
