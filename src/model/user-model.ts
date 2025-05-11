@@ -25,3 +25,8 @@ export function toUserResponse(user: User): UserResponse {
     updated_at: user.updated_at,
   };
 }
+
+export type LoginUserRequest = {
+  username: string;
+  password: string;
+};

@@ -1,5 +1,6 @@
 import { prismaClient } from "../app/database";
 import {
+  LoginUserRequest,
   RegisterUserRequest,
   toUserResponse,
   UserResponse,
@@ -35,6 +36,35 @@ export class UserService {
         token: null,
       },
     });
+    return toUserResponse(user);
+  }
+
+  static async login(request: LoginUserRequest): Promise<UserResponse> {
+    request = UserValidation.LOGIN.parse(request);
+
+    const user = await prismaClient.user.findUnique({
+      where: {
+        username: request.username,
+      },
+    });
+    if (!user) {
+      throw new HTTPException(400, {
+        message: "Invalid username or password",
+        cause: "UserService.login",
+      });
+    }
+
+    const isValidPassword = await Bun.password.verify(
+      request.password,
+      user.password
+    );
+    if (!isValidPassword) {
+      throw new HTTPException(400, {
+        message: "Invalid username or password",
+        cause: "UserService.login",
+      });
+    }
+
     return toUserResponse(user);
   }
 }
